@@ -133,7 +133,28 @@ final class CredentialsManager {
             entity.network.auth = auth
             return entity
         }
+    
     }
+    func connectToHiddenNetwork(_ ssid: String) {
+        guard let auth = getAuthFromSsid(ssid) else {
+            Log.error("No credentials found for hidden network: \(ssid)")
+            return
+        }
+
+        // Attempt connection using saved credentials
+        Log.info("Attempting to connect to hidden network: \(ssid)")
+        
+        WiFiManager.connect(ssid: ssid, password: auth.password) { success, error in
+            if success {
+                Log.info("Successfully connected to hidden network: \(ssid)")
+            } else if let error = error {
+                Log.error("Failed to connect to hidden network: \(ssid). Error: \(error.localizedDescription)")
+            } else {
+                Log.error("Unknown error occurred while connecting to hidden network: \(ssid)")
+            }
+        }
+    }
+
 }
 
 fileprivate extension NetworkInfo {
